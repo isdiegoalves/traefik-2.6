@@ -22,6 +22,9 @@ spec:
           image: traefik:v2.6
           imagePullPolicy: IfNotPresent
           args:
+            # Enable the dashboard without requiring a password. Not recommended
+            # for production.
+            - --api.insecure
             - --api=true
             - --api.dashboard=true
             - --ping=true
@@ -34,6 +37,14 @@ spec:
             - --providers.kubernetescrd.allowCrossNamespace
             - --providers.kubernetescrd
             - --providers.kubernetescrd.allowCrossNamespace=true
+            # Let's Encrypt Configurtion.
+            - --certificatesresolvers.default.acme.email=isdiegoalves@gmail.com
+            - --certificatesresolvers.default.acme.storage=acme.json
+            - --certificatesresolvers.default.acme.tlschallenge
+            # Use the staging ACME server. Uncomment this while testing to prevent
+            # hitting rate limits in production.
+            - --certificatesresolvers.default.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+        
           readinessProbe:
             httpGet:
               path: /ping
